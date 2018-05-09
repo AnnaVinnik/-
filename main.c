@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int n = 4;
-double *x, *y, *X, *Y, eps = 0.2;
+double *x, *y, *X, *Y, eps = 0.1;
 const double N = 4;
 
 double func(double x)
@@ -91,14 +91,14 @@ double I, I2n, h, k = 0;
 	I = I * h;
 	printf("I = %.3f x[n] = %.1f\n", I, x[n]);
 		
-	{
+	for (k = 0; (I - I2n) / 3 > eps; k++){
 		n *= 2;
 		if (k > 0){
 			x = realloc(x, sizeof(double) * n);
 			y = realloc(y, sizeof(double) * n);
 			I = I2n;
 		}
-		
+		printf("\n I = %.3f\n", I);
 		
 		for (int i = 0; i <= n; i++){
 			
@@ -108,7 +108,8 @@ double I, I2n, h, k = 0;
 		}
 		
 		h = (x[n] - x[0]) / n;
-		
+		printf("h = %.2f\n", h);
+		I2n = 0;
 		for (int i = 1; i <= n - 1; i++){
 			I2n += y[i];
 			printf("I2n = %.3f\n", I2n);
@@ -118,7 +119,7 @@ double I, I2n, h, k = 0;
 		I2n = I2n * h;
 		printf("I2n = %.3f\n", I2n);
 		k++;
-	}while ((((I - I2n) / 3) > eps) && (k < 2));
+	}
 	return I2n;
 }
 
