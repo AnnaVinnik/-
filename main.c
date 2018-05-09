@@ -62,14 +62,66 @@ double intNewton(double xn){
 
 double init()
 {
-	for (int i = 0; i <= n; i++){
+	for (int i = 0; i <= N; i++){
 		X[i] = x[i] = i;
 		Y[i] = y[i] = func(x[i]);
 	}
 }
 
 
-
+double Simpson()
+{
+double I = 0, I2n = 0, h = 0, k = 0;
+	x = (double *)malloc(sizeof(double) * n * 2);
+	y = (double *)malloc(sizeof(double) * n * 2);
+	X = (double *)malloc(sizeof(double) * N);
+	Y = (double *)malloc(sizeof(double) * N);
+	n = N;
+	init();
+		h = (x[n] - x[0]) / n;
+		
+	for (int i = 1; i <= n - 1; i = i + 2){
+		I += 4 * y[i];
+	}
+	
+	for (int i = 2; i <= n - 2; i = i + 2){
+		I += 2 * y[i];
+	}
+	I += (y[0] + y[n]);
+	I = I * h / 3;
+	printf("I = %.3f\n", I);
+		
+	for (k = 0; (I - I2n) / 3 > eps; k++){
+		n *= 2;
+		if (k > 0){
+			x = realloc(x, sizeof(double) * n);
+			y = realloc(y, sizeof(double) * n);
+			I = I2n;
+		}
+		
+		for (int i = 0; i <= n; i++){
+			
+			x[i] = i * h / 2;
+			y[i] = func(x[i]);
+			
+		}
+		
+		h = (x[n] - x[0]) / n;
+		I2n = 0;
+		for (int i = 1; i <= n - 1; i = i + 2){
+			I2n += 4 * y[i];
+		}
+	
+		for (int i = 2; i <= n - 2; i = i + 2){
+			I2n += 2 * y[i];
+		}
+		I2n += (y[0] + y[n]);
+		I2n = I2n * (h / 3);
+		printf("I2n = %.3f\n", I2n);
+		k++;
+	}
+	return I2n;
+}
 
 double integ()
 {
@@ -84,12 +136,10 @@ double I, I2n, h, k = 0;
 		
 	for (int i = 1; i <= n - 1; i++){
 		I += y[i];
-		printf("I = %.3f\n", I);
 	}
 	I += (y[0] + y[n]) / 2;
-	printf("I = %.3f\n", I);
 	I = I * h;
-	printf("I = %.3f x[n] = %.1f\n", I, x[n]);
+	printf("I = %.3f\n", I);
 		
 	for (k = 0; (I - I2n) / 3 > eps; k++){
 		n *= 2;
@@ -98,7 +148,6 @@ double I, I2n, h, k = 0;
 			y = realloc(y, sizeof(double) * n);
 			I = I2n;
 		}
-		printf("\n I = %.3f\n", I);
 		
 		for (int i = 0; i <= n; i++){
 			
@@ -108,14 +157,11 @@ double I, I2n, h, k = 0;
 		}
 		
 		h = (x[n] - x[0]) / n;
-		printf("h = %.2f\n", h);
 		I2n = 0;
 		for (int i = 1; i <= n - 1; i++){
 			I2n += y[i];
-			printf("I2n = %.3f\n", I2n);
 		}
 		I2n += (y[0] + y[n]) / 2;
-		printf("I2n = %.3f\n", I2n);
 		I2n = I2n * h;
 		printf("I2n = %.3f\n", I2n);
 		k++;
@@ -125,34 +171,21 @@ double I, I2n, h, k = 0;
 
 int main()
 {
-	integ();
-	printf("x: ");
-	for (int i = 0; i <= n; i++)
-		printf("%.2f  ", x[i]);
+	printf("\nФормула трапеции: \n");
+	integ();	
+	printf("Формула Симпсона: \n");
+	Simpson();
+	printf("\nx: ");
+	for (int i = 0; i <= N; i++)
+		printf("%.2f  ", X[i]);
 	printf("\n");
 	
 	printf("y: ");
-	for (int i = 0; i <= n; i++)
-		printf("%.2f  ", y[i]);
+	for (int i = 0; i <= N; i++)
+		printf("%.2f  ", Y[i]);
 	printf("\n");
-	/*
-	x = (double *)malloc(sizeof(double) * n * 2);
-	y = (double *)malloc(sizeof(double) * n * 2);
-	X = (double *)malloc(sizeof(double) * N);
-	Y = (double *)malloc(sizeof(double) * N);
-	init();
+
 	
-		printf("x: ");
-	for (int i = 0; i <= n; i++)
-		printf("%.2f  ", x[i]);
-	printf("\n");
 	
-	printf("y: ");
-	for (int i = 0; i <= n; i++)
-		printf("%.2f  ", y[i]);
-	printf("\n");
-	
-	printf("Newton (0.5) = %.3f\n", intNewton(0.5));
-	*/
 return 0;
 }
